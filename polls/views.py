@@ -5,15 +5,17 @@ from django.utils import timezone
 from django.views import generic
 from polls.models import Question, Choice
 
+
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
 
     def get_queryset(self) -> QuerySet:  # در صفحه با question_list در دسترس هست
         """
-        Return the last five published questions (not including those set to be
-        published in the future).
+        Return the last five published questions (not including those set to be published in the future).
         """
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
+
+
 # def index(request):
 #     latest_question_list = Question.objects.order_by('-pub_date')[:5]
 #     context = {'latest_question_list': latest_question_list}
@@ -21,6 +23,14 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Question  # در صفحه با question در دسترس هست
     template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        """
+        Excludes any questions that aren't published yet.
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+
 # def detail(request, pk):
 #     question: Question = get_object_or_404(Question, pk=pk)
 #     choices: QuerySet[Choice] = question.choice_set.all()
@@ -53,6 +63,7 @@ def vote(request, pk):
             'question': question,
             'choices': question.choice_set.all()
         })
+
 
 class ResultsView(generic.DetailView):
     model = Question
