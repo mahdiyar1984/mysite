@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.utils import timezone
 import datetime
 from django.utils import timezone
@@ -11,6 +12,12 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question_text
+
+    @admin.display(
+        boolean=True,  # نمایش به صورت تیک سبز/قرمز به جای True/False
+        ordering="pub_date",  # امکان مرتب‌سازی بر اساس pub_date
+        description="Published recently?",  # عنوان ستون در ادمین
+    )
 
     def was_published_recently(self):
         now = timezone.now()
